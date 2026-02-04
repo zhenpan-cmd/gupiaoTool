@@ -188,8 +188,11 @@ class ImprovedStockAnalyzer:
         if price and volume and price > 0 and volume > 0:
             estimated_amount = price * volume * 100  # 成交量单位是手，每手100股
             # 允许一定误差范围（50%）
-            if abs(amount - estimated_amount) / estimated_amount > 0.5 and amount != 0:
+            if amount > 0 and abs(amount - estimated_amount) / estimated_amount > 0.5:
                 return False, f"成交额与价格、成交量不匹配 (估算: {estimated_amount:.0f}, 实际: {amount:.0f})"
+            elif amount == 0 and estimated_amount > 0:
+                # 成交额为0但根据价格和成交量计算不为0的情况
+                return False, f"成交额为0但根据价格和成交量计算应为{estimated_amount:.0f}"
         
         return True, "数据合理"
     
